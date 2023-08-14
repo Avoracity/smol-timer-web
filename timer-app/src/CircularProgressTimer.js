@@ -15,13 +15,16 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
     useEffect(() => {
         const audioElement = audioElementRef.current; // Store the ref value in a local variable
         const interval = setInterval(() => {
-          if (time === 0 && !isPaused && !isPlayed) {
+          if (!isPaused && time > 0) {
+            setTime(time - 1);
+          } else if (time === 0 && !isPlayed) {
             setTimeout(() => {
               audioElement.play(); // Play the sound when timer hits 0 and sound hasn't been played
             }, 500);
-            setIsPlayed(true); // Set the isPlayed state to true
-          } else if (!isPaused && time > 0) {
-            setTime(time - 1);
+            setIsPlayed(true); // Set isPlayed to true
+            setIsPaused(true); // Pause the timer
+          } else if (time === 0 && isPlayed) {
+            setIsPaused(true); // Pause the timer
           }
         }, 1000);
       
