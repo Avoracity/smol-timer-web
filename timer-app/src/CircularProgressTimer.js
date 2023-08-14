@@ -145,13 +145,13 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
           />
           <div className="flex justify-center space-x-2 pl-10">
             <button
-              className="bg-yellow-500 text-white px-3 py-2 rounded-lg"
+              className="bg-yellow-500 active:bg-yellow-600 text-white px-3 py-2 rounded-lg"
               onClick={togglePause}
             >
               <FontAwesomeIcon icon={isPaused ? faPlay : faPause} />
             </button>
             <button 
-              className="bg-orange-500 text-white px-3 py-2 rounded-lg"
+              className="bg-orange-500 active:bg-orange-600 text-white px-3 py-2 rounded-lg"
               onClick={() => {
                 setTime(initialTime);
                 setIsPaused(true);
@@ -161,7 +161,7 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
               <FontAwesomeIcon icon={faRedo} />
             </button>
             <button
-              className="bg-red-500 text-white px-3 py-2 rounded-lg"
+              className="bg-red-500 active:bg-red-600 text-white px-3 py-2 rounded-lg"
               onClick={() => {
                 handleLoop();
                 setTime(initialTime);
