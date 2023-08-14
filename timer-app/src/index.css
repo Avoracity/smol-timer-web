@@ -23,3 +23,8 @@ code {
 
 }
 
+.timer-box-shadow {
+  position: relative;
+  box-shadow: 6px 6px 0px 0px rgba(128, 0, 0, 10.5);
+  padding: 10px; /* Adjust padding as needed */
+}
