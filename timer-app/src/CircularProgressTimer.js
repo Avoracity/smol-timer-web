@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const CircularProgressTimer = () => {
-  const [initialTime, setInitialTime] = useState(60); // Default initial time
+const CircularProgressTimer = React.forwardRef((props, ref) => {
+  const [initialTime, setInitialTime] = useState(60);
   const [time, setTime] = useState(initialTime);
   const [isPaused, setIsPaused] = useState(true);
+  const inputRef = useRef(null); // Ref for the input field
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -14,6 +15,15 @@ const CircularProgressTimer = () => {
 
     return () => clearInterval(interval);
   }, [time, isPaused]);
+
+  useEffect(() => {
+    if (ref) {
+      ref.current = inputRef.current; // Set the ref from App.js
+      if (inputRef.current) {
+        inputRef.current.focus(); // Focus the input field
+      }
+    }
+  }, [ref]);
 
   const progress = ((initialTime - time) / initialTime) * 100;
 
@@ -52,6 +62,7 @@ const CircularProgressTimer = () => {
           pattern="[0-9]*"
           value={initialTime}
           onChange={handleInputChange}
+          ref={inputRef} // Use the inputRef here
           className="border rounded-md p-2 w-full appearance-none number-input-field"
           min="0"
           disabled={!isPaused}
@@ -77,6 +88,6 @@ const CircularProgressTimer = () => {
       </div>
     </div>
   );
-};
+});
 
 export default CircularProgressTimer;

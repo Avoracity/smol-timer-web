@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import CircularProgressTimer from './CircularProgressTimer';
 
 const App = () => {
   const [timers, setTimers] = useState([]);
+  const inputRefs = useRef([]); // Refs for input fields
 
   const addTimer = () => {
-    setTimers([...timers, { id: Date.now() }]);
+    const newTimer = { id: Date.now() };
+    setTimers([...timers, newTimer]);
   };
 
   return (
@@ -18,10 +20,10 @@ const App = () => {
         Add Timer
       </button>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {timers.map((timer) => (
+        {timers.map((timer, index) => (
           <div key={timer.id}>
             <div className="rounded-lg p-4 shadow-md">
-              <CircularProgressTimer />
+              <CircularProgressTimer ref={(ref) => (inputRefs.current[index] = ref)} />
             </div>
           </div>
         ))}
