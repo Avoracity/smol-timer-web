@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay, faPause, faRedo, faInfinity } from '@fortawesome/free-solid-svg-icons';
 
 const CircularProgressTimer = React.forwardRef((props, ref) => {
   const [initialTime, setInitialTime] = useState(60);
   const [time, setTime] = useState(initialTime);
   const [isPaused, setIsPaused] = useState(true);
+  const [timerTitle, setTimerTitle] = useState('Timer'); // Default title
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -40,6 +43,10 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
     setTime(newTime);
   };
 
+  const handleTitleChange = (e) => {
+    setTimerTitle(e.target.value);
+  };
+
   return (
     <div className="flex items-center space-x-4">
       <div className="flex flex-col items-center">
@@ -65,8 +72,14 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
         </svg>
         <div className="text-2xl font-bold mt-2 text-yellow-50">{time} seconds</div>
       </div>
-      <div className="w-2/5 flex flex-col justify-between">
-        <div className="flex flex-col items-center space-y-4">
+      <div className="w-2/4 flex flex-col justify-between">
+        <div className="flex flex-col items-center space-y-2">
+          <input
+            type="text"
+            value={timerTitle}
+            onChange={handleTitleChange}
+            className="border rounded-md p-2 w-full text-white bg-indigo-900 appearance-none"
+          />
           <input
             type="text"
             inputMode="numeric"
@@ -81,27 +94,27 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
           />
           <div className="flex justify-center space-x-2 pl-10">
             <button
-              className="bg-green-500 text-white px-3 py-2 rounded-lg"
+              className="bg-yellow-500 text-white px-3 py-2 rounded-lg"
               onClick={togglePause}
             >
-              {isPaused ? 'Play' : 'Pause'}
+              <FontAwesomeIcon icon={isPaused ? faPlay : faPause} />
             </button>
             <button
-              className="bg-red-500 text-white px-3 py-2 rounded-lg"
+              className="bg-orange-500 text-white px-3 py-2 rounded-lg"
               onClick={() => {
                 setTime(initialTime);
                 setIsPaused(true);
               }}
             >
-              Reset
+              <FontAwesomeIcon icon={faRedo} />
             </button>
             <button
-              className="bg-yellow-500 text-white px-3 py-2 rounded-lg"
+              className="bg-red-500 text-white px-3 py-2 rounded-lg"
               onClick={() => {
                 // Add loop button functionality here
               }}
             >
-              Loop
+              <FontAwesomeIcon icon={faInfinity} />
             </button>
           </div>
         </div>
