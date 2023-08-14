@@ -4,7 +4,7 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
   const [initialTime, setInitialTime] = useState(60);
   const [time, setTime] = useState(initialTime);
   const [isPaused, setIsPaused] = useState(true);
-  const inputRef = useRef(null); // Ref for the input field
+  const inputRef = useRef(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -18,14 +18,16 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
 
   useEffect(() => {
     if (ref) {
-      ref.current = inputRef.current; // Set the ref from App.js
+      ref.current = inputRef.current;
       if (inputRef.current) {
-        inputRef.current.focus(); // Focus the input field
+        inputRef.current.focus();
       }
     }
   }, [ref]);
 
   const progress = ((initialTime - time) / initialTime) * 100;
+  const radius = 40;
+  const circumference = 2 * Math.PI * radius;
 
   const togglePause = () => {
     setIsPaused(!isPaused);
@@ -45,15 +47,23 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
           <circle
             cx="50"
             cy="50"
-            r="40"
-            stroke="blue"
+            r={radius}
+            stroke="#f3f3f3"
             strokeWidth="10"
             fill="transparent"
-            strokeDasharray="251.327"
-            strokeDashoffset={(progress / 100) * 251.327}
+          />
+          <circle
+            cx="50"
+            cy="50"
+            r={radius}
+            stroke="orange"
+            strokeWidth="10"
+            fill="transparent"
+            strokeDasharray={circumference}
+            strokeDashoffset={(circumference * progress) / 100}
           />
         </svg>
-        <div className="text-2xl font-bold mt-2">{time} seconds</div>
+        <div className="text-2xl font-bold mt-2 text-yellow-50">{time} seconds</div>
       </div>
       <div className="w-2/5">
         <input
@@ -62,8 +72,8 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
           pattern="[0-9]*"
           value={initialTime}
           onChange={handleInputChange}
-          ref={inputRef} // Use the inputRef here
-          className="border rounded-md p-2 w-full appearance-none number-input-field"
+          ref={inputRef}
+          className="border rounded-md p-2 w-full bg-indigo-100 appearance-none number-input-field"
           min="0"
           disabled={!isPaused}
           style={{ visibility: isPaused ? 'visible' : 'hidden' }}
