@@ -1,75 +1,86 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause, faRedo, faInfinity } from '@fortawesome/free-solid-svg-icons';
-import alarmSound from './alarm.mp3'; // Replace with the correct path to your sound file
 
 const CircularProgressTimer = React.forwardRef((props, ref) => {
-  const [initialTime, setInitialTime] = useState(60);
-  const [time, setTime] = useState(initialTime);
-  const [isPaused, setIsPaused] = useState(true);
-  const [isPlayed, setIsPlayed] = useState(false); // Track if play button has been clicked
-  const [timerTitle, setTimerTitle] = useState('Timer'); // Default title
-  const inputRef = useRef(null);
-  const audioElementRef = useRef(null); // Ref for the audio element
+    const [initialTime, setInitialTime] = useState(60);
+    const [time, setTime] = useState(initialTime);
+    const [isPaused, setIsPaused] = useState(true);
+    const [isLooped, setIsLooped] = useState(false);
+    const [loopInterval, setLoopInterval] = useState(null);
+    //const [loopMax, setLoopMax] = useState(999); // default loop amount
+    const [loopMax] = useState(999); // default loop amount
 
-  useEffect(() => {
-    const audioElement = audioElementRef.current; // Store the ref value in a local variable
-    const interval = setInterval(() => {
-      if (!isPaused && time > 0) {
-        setTime(time - 1);
-      } else if (time === 0 && !isPlayed) {
-        setTimeout(() => {
-          audioElement.play(); // Play the sound when timer hits 0 and sound hasn't been played
-        }, 500);
-        setIsPlayed(true); // Set isPlayed to true
-        setIsPaused(true); // Pause the timer
-      } else if (time === 0 && isPlayed) {
-        // Automatically restart the timer and play when it hits 0
+    const [loopCounter, setLoopCounter] = useState(0);
+    const [timerTitle, setTimerTitle] = useState('Timer');
+    const inputRef = useRef(null);
+  
+    useEffect(() => {
+      const interval = setInterval(() => {
+        if (!isPaused && time > 0) {
+          setTime(time - 1);
+        } else if (time === 0 && isLooped) {
+          setLoopCounter(loopCounter + 1);
+          if (loopCounter < loopMax) {
+            setTime(initialTime);
+          } else {
+            clearInterval(loopInterval);
+            setIsLooped(false);
+            setIsPaused(true);
+            setLoopCounter(0);
+          }
+        } else if (time === 0) {
+          clearInterval(loopInterval);
+          setIsPaused(true);
+        }
+      }, 1000);
+  
+      return () => {
+        clearInterval(interval);
+        clearInterval(loopInterval);
+      };
+    }, [time, isPaused, isLooped, loopCounter, loopInterval, loopMax, initialTime]);
+  
+    useEffect(() => {
+      if (ref) {
+        ref.current = inputRef.current;
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }
+    }, [ref]);
+  
+    const togglePause = () => {
+      setIsPaused(!isPaused);
+    };
+  
+    const handleLoop = () => {
+      setIsLooped(!isLooped);
+      if (isLooped) {
+        clearInterval(loopInterval);
+        setLoopCounter(0);
         setTime(initialTime);
         setIsPaused(false);
-        setIsPlayed(false);
+      } else {
+        const newLoopInterval = setInterval(() => {
+          if (isPaused) {
+            setTime(initialTime);
+          }
+        }, initialTime * 1000);
+        setLoopInterval(newLoopInterval);
       }
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-      audioElement.pause(); // Pause the sound if the component unmounts
-      audioElement.currentTime = 0; // Reset the sound to the beginning
     };
-  }, [time, isPaused, isPlayed, initialTime]);
-
-  useEffect(() => {
-    if (ref) {
-      ref.current = inputRef.current;
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
-    }
-  }, [ref]);
-
-  const progress = ((initialTime - time) / initialTime) * 100;
-  const radius = 40;
-  const circumference = 2 * Math.PI * radius;
-
-  const togglePause = () => {
-    if (!isPaused && time === 0 && !isPlayed) {
-      const audioElement = audioElementRef.current;
-      audioElement.pause();
-      audioElement.currentTime = 0;
-      setIsPlayed(false);
-    } else {
-      setIsPaused(!isPaused);
-    }
-  };
-
-  const handleLoop = () => {
-    if (!isPaused) {
+    const handleRestart = () => {
       setTime(initialTime);
-      setIsPlayed(true);
-      setIsPaused(false);
-    }
-  };
-
+      setIsPaused(true);
+      //setIsPlayed(false);
+      setLoopCounter(0);
+      setIsLooped(false);
+      if (loopInterval) {
+        clearInterval(loopInterval);
+      }
+    };
+  
   const handleInputChange = (e) => {
     const inputValue = e.target.value;
     const newTime = inputValue === '' ? 0 : parseInt(inputValue);
@@ -81,11 +92,11 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
     setTimerTitle(e.target.value);
   };
 
-  const handleRestart = () => {
-    setTime(initialTime);
-    setIsPaused(true);
-    setIsPlayed(false); // Reset the isPlayed state when timer is restarted
-  };
+
+
+  const progress = ((initialTime - time) / initialTime) * 100;
+  const radius = 40;
+  const circumference = 2 * Math.PI * radius;
 
   return (
     <div className="flex items-center space-x-4">
@@ -155,7 +166,7 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
                 handleLoop();
                 setTime(initialTime);
                 setIsPaused(false);
-                setIsPlayed(false); // Reset isPlayed state
+                //setIsPlayed(false); // Reset isPlayed state
               }}
             >
               <FontAwesomeIcon icon={faInfinity} />
@@ -164,9 +175,7 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
         </div>
       </div>
       {/* Audio element for the alarm sound */}
-      <audio ref={audioElementRef}>
-        <source src={alarmSound} type="audio/mpeg" />
-      </audio>
+
     </div>
   );
 });
