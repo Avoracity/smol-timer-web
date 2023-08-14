@@ -107,7 +107,7 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
             cy="50"
             r={radius}
             stroke="#f3f3f3"
-            strokeWidth="10"
+            strokeWidth="3"
             fill="transparent"
           />
           <circle
@@ -115,7 +115,7 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
             cy="50"
             r={radius}
             stroke="orange"
-            strokeWidth="10"
+            strokeWidth="3"
             fill="transparent"
             strokeDasharray={circumference}
             strokeDashoffset={(circumference * progress) / 100}
