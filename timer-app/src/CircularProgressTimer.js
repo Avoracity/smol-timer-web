@@ -65,35 +65,45 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
         </svg>
         <div className="text-2xl font-bold mt-2 text-yellow-50">{time} seconds</div>
       </div>
-      <div className="w-2/5">
-        <input
-          type="text"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          value={initialTime}
-          onChange={handleInputChange}
-          ref={inputRef}
-          className="border rounded-md p-2 w-full bg-indigo-100 appearance-none number-input-field"
-          min="0"
-          disabled={!isPaused}
-          style={{ visibility: isPaused ? 'visible' : 'hidden' }}
-        />
-        <div className="flex justify-center mt-4 space-x-2">
-          <button
-            className="bg-green-500 text-white px-3 py-2 rounded-lg"
-            onClick={togglePause}
-          >
-            {isPaused ? 'Play' : 'Pause'}
-          </button>
-          <button
-            className="bg-red-500 text-white px-3 py-2 rounded-lg"
-            onClick={() => {
-              setTime(initialTime);
-              setIsPaused(true);
-            }}
-          >
-            Reset
-          </button>
+      <div className="w-2/5 flex flex-col justify-between">
+        <div className="flex flex-col items-center space-y-4">
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            value={initialTime}
+            onChange={handleInputChange}
+            ref={inputRef}
+            className="border rounded-md p-2 w-full bg-indigo-100 appearance-none number-input-field"
+            min="0"
+            disabled={!isPaused}
+            style={{ visibility: isPaused ? 'visible' : 'hidden' }}
+          />
+          <div className="flex justify-center space-x-2 pl-10">
+            <button
+              className="bg-green-500 text-white px-3 py-2 rounded-lg"
+              onClick={togglePause}
+            >
+              {isPaused ? 'Play' : 'Pause'}
+            </button>
+            <button
+              className="bg-red-500 text-white px-3 py-2 rounded-lg"
+              onClick={() => {
+                setTime(initialTime);
+                setIsPaused(true);
+              }}
+            >
+              Reset
+            </button>
+            <button
+              className="bg-yellow-500 text-white px-3 py-2 rounded-lg"
+              onClick={() => {
+                // Add loop button functionality here
+              }}
+            >
+              Loop
+            </button>
+          </div>
         </div>
       </div>
     </div>
