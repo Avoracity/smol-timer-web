@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/smol-timer-web/static/css/main.aa8053b6.css",
+    "main.js": "/smol-timer-web/static/js/main.38e160db.js",
+    "index.html": "/smol-timer-web/index.html",
+    "main.aa8053b6.css.map": "/smol-timer-web/static/css/main.aa8053b6.css.map",
+    "main.38e160db.js.map": "/smol-timer-web/static/js/main.38e160db.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.aa8053b6.css",
+    "static/js/main.38e160db.js"
+  ]
+}
