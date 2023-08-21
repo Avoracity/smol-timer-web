@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause, faRedo, faInfinity } from '@fortawesome/free-solid-svg-icons';
 
-const CircularProgressTimer = React.forwardRef((props, ref) => {
+const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
     const [initialTime, setInitialTime] = useState(60);
     const [time, setTime] = useState(initialTime);
     const [isPaused, setIsPaused] = useState(true);
@@ -14,7 +14,8 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
     const [loopCounter, setLoopCounter] = useState(0);
     const [timerTitle, setTimerTitle] = useState('Timer');
     const inputRef = useRef(null);
-  
+    const [isDeleted, setIsDeleted] = useState(false);
+
     useEffect(() => {
       const interval = setInterval(() => {
         if (!isPaused && time > 0) {
@@ -83,7 +84,12 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
   
   const handleInputChange = (e) => {
     const inputValue = e.target.value;
-    const newTime = inputValue === '' ? 0 : parseInt(inputValue);
+    let newTime = inputValue === '' ? 0 : parseInt(inputValue);
+
+      // Limit the newTime to 999999
+      if (newTime > 999999) {
+        newTime = 999999;
+      }
     setInitialTime(newTime);
     setTime(newTime);
   };
@@ -93,13 +99,28 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
   };
 
 
+  const handleDelete = () => {
+    onDelete(id); // Call the onDelete function passed from the parent component
+    setIsDeleted(true);
+  };
+
+  if (isDeleted) {
+    return null; // Don't render the timer if it's deleted
+  }
+
 
   const progress = ((initialTime - time) / initialTime) * 100;
   const radius = 40;
   const circumference = 2 * Math.PI * radius;
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className="flex items-center space-x-2 relative">
+               
+      {/* Delete button */}
+      <button className="absolute top-0 right-0 text-white" onClick={handleDelete}>
+        X
+      </button>
+
       <div className="flex flex-col items-center">
         <svg className="w-24 h-24">
           <circle
@@ -121,9 +142,10 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
             strokeDashoffset={(circumference * progress) / 100}
           />
         </svg>
+        
         <div className="text-2xl font-bold mt-2 text-yellow-50">{time} seconds</div>
       </div>
-      <div className="w-2/4 flex flex-col justify-between">
+      <div className="w-2/4 flex flex-col justify-between p-2">
         <div className="flex flex-col items-center space-y-2">
           <input
             type="text"
@@ -140,6 +162,7 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
             ref={inputRef}
             className="border rounded-md p-2 w-full bg-indigo-100 appearance-none number-input-field"
             min="0"
+            max="999999"
             disabled={!isPaused}
             style={{ visibility: isPaused ? 'visible' : 'hidden' }}
           />
@@ -160,6 +183,7 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
             >
               <FontAwesomeIcon icon={faRedo} />
             </button>
+
             <button
               className="bg-red-500 active:bg-red-600 text-white px-3 py-2 rounded-lg"
               onClick={() => {
@@ -171,6 +195,7 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
             >
               <FontAwesomeIcon icon={faInfinity} />
             </button>
+            
           </div>
         </div>
       </div>
