@@ -72,7 +72,7 @@ const CircularProgressTimer = React.forwardRef((props, ref) => {
     };
     const handleRestart = () => {
       setTime(initialTime);
-      setIsPaused(true);
+      setIsPaused(false); // start countdown immediately after reset
       //setIsPlayed(false);
       setLoopCounter(0);
       setIsLooped(false);
