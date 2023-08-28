@@ -22,12 +22,12 @@ const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
     // interval : updates timer countdown every second
     // setInterval : function that handles countdown logic every 1000
     useEffect(() => {
-      const audioElement = new Audio(alarmSound); // Create a new audio element
 
       const interval = setInterval(() => {
         if (!isPaused && time > 0) {
           setTime(time - 1);
-        } else if (time === 0 && isLooped) {
+        } 
+        else if (time === 0 && isLooped) {
           setLoopCounter(loopCounter + 1);
           if (loopCounter < loopMax) {
             setTime(initialTime);
@@ -42,11 +42,7 @@ const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
           setIsPaused(true);
 
    
-                // Play the alarm sound if it hasn't been played in the current loop cycle
-                if (!alarmPlayed) {
-                  audioElement.play();
-                 // setAlarmPlayed(true);
-              }
+    
       }
       }, 1000);
   
@@ -64,9 +60,9 @@ const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
       }
   }, [time, isLooped, initialTime]);
 
-    // Effect to handle playing the alarm sound when time reaches 0
+    // Effect to handle playing the alarm sound when time reaches 1
     useEffect(() => {
-      if (time === 0 && !alarmPlayed) {
+      if (time === 1 && !alarmPlayed) {
         // Play the alarm sound
         const audio = new Audio(alarmSound);
         audio.play();
