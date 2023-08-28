@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause, faRedo, faInfinity } from '@fortawesome/free-solid-svg-icons';
 
 const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
+    // state variables
     const [initialTime, setInitialTime] = useState(60);
     const [time, setTime] = useState(initialTime);
     const [isPaused, setIsPaused] = useState(true);
@@ -10,12 +11,14 @@ const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
     const [loopInterval, setLoopInterval] = useState(null);
     //const [loopMax, setLoopMax] = useState(999); // default loop amount
     const [loopMax] = useState(999); // default loop amount
-
     const [loopCounter, setLoopCounter] = useState(0);
     const [timerTitle, setTimerTitle] = useState('Timer');
     const inputRef = useRef(null);
     const [isDeleted, setIsDeleted] = useState(false);
-
+    
+    // Effect to handle countdown and loop
+    // interval : updates timer countdown every second
+    // setInterval : function that handles countdown logic every 1000
     useEffect(() => {
       const interval = setInterval(() => {
         if (!isPaused && time > 0) {
@@ -36,12 +39,14 @@ const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
         }
       }, 1000);
   
+      // Cleanup interval when component unmounts or dependencies change
       return () => {
         clearInterval(interval);
         clearInterval(loopInterval);
       };
     }, [time, isPaused, isLooped, loopCounter, loopInterval, loopMax, initialTime]);
   
+    // Effect to manage input focus when user creates new timer
     useEffect(() => {
       if (ref) {
         ref.current = inputRef.current;
@@ -71,6 +76,7 @@ const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
         setLoopInterval(newLoopInterval);
       }
     };
+
     const handleRestart = () => {
       setTime(initialTime);
       setIsPaused(false); // start countdown immediately after reset
