@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause, faRedo, faInfinity } from '@fortawesome/free-solid-svg-icons';
+import alarmSound from './alarm.mp3'; // Adjust the path to your alarm sound file
 
 const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
     // state variables
@@ -15,11 +16,14 @@ const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
     const [timerTitle, setTimerTitle] = useState('Timer');
     const inputRef = useRef(null);
     const [isDeleted, setIsDeleted] = useState(false);
-    
+    const [alarmPlayed, setAlarmPlayed] = useState(false); // New state variable for the alarm
+
     // Effect to handle countdown and loop
     // interval : updates timer countdown every second
     // setInterval : function that handles countdown logic every 1000
     useEffect(() => {
+      const audioElement = new Audio(alarmSound); // Create a new audio element
+
       const interval = setInterval(() => {
         if (!isPaused && time > 0) {
           setTime(time - 1);
@@ -33,10 +37,17 @@ const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
             setIsPaused(true);
             setLoopCounter(0);
           }
-        } else if (time === 0) {
+        } else if (time === 0 ) {
           clearInterval(loopInterval);
           setIsPaused(true);
-        }
+
+   
+                // Play the alarm sound if it hasn't been played in the current loop cycle
+                if (!alarmPlayed) {
+                  audioElement.play();
+                 // setAlarmPlayed(true);
+              }
+      }
       }, 1000);
   
       // Cleanup interval when component unmounts or dependencies change
@@ -44,7 +55,27 @@ const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
         clearInterval(interval);
         clearInterval(loopInterval);
       };
-    }, [time, isPaused, isLooped, loopCounter, loopInterval, loopMax, initialTime]);
+    }, [time, isPaused, isLooped, loopCounter, loopInterval, loopMax, initialTime, alarmPlayed]);
+  
+    useEffect(() => {
+      if (time !== initialTime) {
+          // Reset the alarmPlayed state when time changes and isLooped is false
+          setAlarmPlayed(false);
+      }
+  }, [time, isLooped, initialTime]);
+
+    // Effect to handle playing the alarm sound when time reaches 0
+    useEffect(() => {
+      if (time === 0 && !alarmPlayed) {
+        // Play the alarm sound
+        const audio = new Audio(alarmSound);
+        audio.play();
+        
+        setAlarmPlayed(true); // Set a state variable to prevent repeated playing
+      }
+    }, [time, alarmPlayed]);
+
+
   
     // Effect to manage input focus when user creates new timer
     useEffect(() => {
@@ -56,10 +87,18 @@ const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
       }
     }, [ref]);
   
+        // Reset the alarmPlayed state when the isLooped state changes
+        useEffect(() => {
+          if (isLooped) {
+              setAlarmPlayed(false);
+          }
+      }, [isLooped]);
+  
     const togglePause = () => {
       setIsPaused(!isPaused);
     };
   
+    
     const handleLoop = () => {
       setIsLooped(!isLooped);
       if (isLooped) {
@@ -74,6 +113,7 @@ const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
           }
         }, initialTime * 1000);
         setLoopInterval(newLoopInterval);
+        
       }
     };
 
@@ -206,6 +246,7 @@ const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
         </div>
       </div>
       {/* Audio element for the alarm sound */}
+      <audio src={alarmSound} preload="auto" />
 
     </div>
   );
