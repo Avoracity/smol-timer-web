@@ -60,9 +60,9 @@ const CircularProgressTimer = React.forwardRef(({id, onDelete}, ref) => {
       }
   }, [time, isLooped, initialTime]);
 
-    // Effect to handle playing the alarm sound when time reaches 1
+    // Effect to handle playing the alarm sound when time reaches 0
     useEffect(() => {
-      if (time === 1 && !alarmPlayed) {
+      if (time === 0 && !alarmPlayed) {
         // Play the alarm sound
         const audio = new Audio(alarmSound);
         audio.play();
